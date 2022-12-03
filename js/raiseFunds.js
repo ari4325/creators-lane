@@ -8,7 +8,7 @@ import {
     getBiconomyForwarderConfig
 } from './biconomyForwardHelpers.js';
 
-let contractAddress = "0xb722486eDD24bEc2640dE4866d6A21C15C8cFCcE";
+let contractAddress = "0x811737663d9ed628ddc71418c16dcc87d5f3d450";
 const app_id = "ddff36b5-0136-4d20-9ba5-1129753e5c57";
 const api_key = "HziWYKHVP.429840c1-257c-4d41-aa7d-329202d56f63";
 let mintContractAddress = "0x34862Fc497ddfa7042838d113E01e5a99f5FfEfD";
@@ -198,6 +198,16 @@ const abi = [
                         "internalType": "string",
                         "name": "genre",
                         "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "equity",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "uri",
+                        "type": "string"
                     }
                 ],
                 "internalType": "struct Creator.Share",
@@ -285,6 +295,25 @@ const abi = [
                 "internalType": "struct Creator.Payout",
                 "name": "",
                 "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            }
+        ],
+        "name": "getTokenOwners",
+        "outputs": [
+            {
+                "internalType": "address[]",
+                "name": "",
+                "type": "address[]"
             }
         ],
         "stateMutability": "view",
@@ -384,6 +413,16 @@ const abi = [
                 "internalType": "uint256",
                 "name": "price",
                 "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_equity",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "_uri",
+                "type": "string"
             }
         ],
         "name": "publishShares",
@@ -410,6 +449,10 @@ const abi = [
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
+    },
+    {
+        "stateMutability": "payable",
+        "type": "receive"
     }
 ];
 
