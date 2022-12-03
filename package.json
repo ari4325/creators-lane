@@ -3,6 +3,8 @@
     "@opengsn/contracts": "^3.0.0-beta.1",
     "@openzeppelin/contracts": "^4.8.0",
     "eth-sig-util": "^3.0.1",
+    "ethereumjs-abi": "^0.6.8",
+    "ethers": "^5.7.2",
     "web3": "^1.8.1"
   }
 }
