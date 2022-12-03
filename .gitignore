@@ -80,3 +80,6 @@ typings/
 
 # truffle
 /build/contracts/*
+
+#package-lock
+package-lock.json

@@ -70,20 +70,3 @@ const sendNotification = async(type, title, body, cta, recipient) => {
 // NFT bought
 //payouts released
 
-
-// const manageEvents = async() => {
-//   await window.ethereum.enable();
-//   const web3 = new Web3(window.ethereum);
-//   const contractInstance = new web3.eth.Contract(
-//       abi,
-//       process.env.CONTRACT_ADDRESS
-//   );
-
-//   accounts = await walletWeb3.eth.getAccounts();
-//   console.log(accounts[0]);
-//   let userAddress =  accounts[0];
-//   let networkId = await walletWeb3.eth.net.getId(); 
-//   const response = await contractInstance.methods.releasePayouts().call();
-// }
-
-
