@@ -20,6 +20,7 @@
     <link href="css/coloring-gradient.css" rel="stylesheet" type="text/css" />
     <!-- custom font -->
     <link href="css/custom-font-3.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 </head>
 
 <body class="switch-scheme">
@@ -183,7 +184,7 @@
                                     </li>
                                 </ul>
                                 <div class="menu_side_area">
-                                    <a href="07_modern-wallet.html" class="btn-main btn-wallet"><i class="icon_wallet_alt"></i><span>Connect Wallet</span></a>
+                                    <div class="btn-main btn-wallet" id="connectWallet"><i class="icon_wallet_alt"></i><span>Connect Wallet</span></div>
                                     <span href="#" id="switch_scheme">
                                         <i class="ss_dark fa fa-moon-o"></i>
                                         <i class="ss_light fa fa-sun-o"></i>
@@ -212,7 +213,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="item_info">
-                                <h2>Creator Name</h2>
+                                <h2 id="name">Creator Name</h2>
                                 <p> Bio: </p>
                                 <p>Requirements of funds for: Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
 
@@ -259,7 +260,7 @@
                                 <div class="spacer-10"></div>
 
                                 <h6>Price</h6>
-                                <div class="nft-item-price"><span>₹150</span></div>
+                                <div class="nft-item-price" id="price"><span>₹150</span></div>
 
                                 <!-- Button trigger modal -->
                                 <a href="#" class="btn-main btn-lg" data-bs-toggle="modal" data-bs-target="#buy_now">
@@ -301,12 +302,12 @@
               <div class="modal-body">
                 <div class="p-3 form-border">
                     <h3>Checkout</h3>
-                    You are about to invest in <b>Creator Name</b>
+                    You are about to invest in <b id="creator">Creator Name</b>
                     <div class="spacer-single"></div>
-                    <h6>Enter quantity. <span class="id-color-2">10 available</span></h6>
-                    <input type="text" name="buy_now_qty" id="buy_now_qty" class="form-control" value="1" />
+                    <h6>Enter quantity. <span class="id-color-2" id="available">10 available</span></h6>
+                    <input type="text" name="buy_now_qty" id="buy_now_qty" class="form-control" value="1"/>
                    
-                    <a target="_blank" class="btn-main btn-fullwidth" style="border-radius: 5px; padding: 4%;">Buy</a>
+                    <div target="_blank" class="btn-main btn-fullwidth" style="border-radius: 5px; padding: 4%;" id="buyBtn">Buy</div>
                 </div>
               </div>
             </div>
@@ -332,6 +333,8 @@
     ================================================== -->
     <script src="js/plugins.js"></script>
     <script src="js/designesia.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="js/details.js"></script>
 
 </body>
 
