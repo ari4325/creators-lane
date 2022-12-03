@@ -1,12 +1,12 @@
 import * as PushAPI from "@pushprotocol/restapi";
 import * as ethers from "ethers";
 import dotenv from 'dotenv';
-dotenv.config(); 
+dotenv.config({path:'../.env'}); 
 
 const Pkey = `0x${process.env.PK}`;
 const signer = new ethers.Wallet(Pkey);
 
-const broadCast = async(creator) => {
+export const broadCast = async(creator) => {
   await sendNotification(
     1,
     `Creator ${creator} has launched NFTs`,
@@ -16,7 +16,7 @@ const broadCast = async(creator) => {
   );
 }
 
-const unicast = async(creator, buyer, id, value) => {
+export const unicast = async(creator, buyer, id, value) => {
   await sendNotification(
     3,
     `Congratulation another one NFT is sold!!!`,
@@ -26,7 +26,7 @@ const unicast = async(creator, buyer, id, value) => {
   );
 }
 
-const multicast = async(creator, id, recipients) => {
+export const multicast = async(creator, id, recipients) => {
   await sendNotification(
     4,
     `Hola believers ${creator} has released payouts`,
@@ -69,3 +69,21 @@ const sendNotification = async(type, title, body, cta, recipient) => {
 /// NFT published
 // NFT bought
 //payouts released
+
+
+// const manageEvents = async() => {
+//   await window.ethereum.enable();
+//   const web3 = new Web3(window.ethereum);
+//   const contractInstance = new web3.eth.Contract(
+//       abi,
+//       process.env.CONTRACT_ADDRESS
+//   );
+
+//   accounts = await walletWeb3.eth.getAccounts();
+//   console.log(accounts[0]);
+//   let userAddress =  accounts[0];
+//   let networkId = await walletWeb3.eth.net.getId(); 
+//   const response = await contractInstance.methods.releasePayouts().call();
+// }
+
+
