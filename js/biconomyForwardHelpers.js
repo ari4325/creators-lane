@@ -1,6 +1,5 @@
-import {ethers} from 'ethers';
-import "ethereumjs-abi";
-import ethereumjsAbi from 'ethereumjs-abi';
+// import "ethereumjs-abi";
+// import ethereumjsAbi from 'ethereumjs-abi';
 //const abi = require("ethereumjs-abi");
 let helperAttributes = {};
 let supportedNetworks = [42,4,5]; //add more

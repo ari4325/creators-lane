@@ -5,6 +5,7 @@
     "@pushprotocol/restapi": "^0.2.2",
     "dotenv": "^16.0.3",
     "eth-sig-util": "^3.0.1",
+    "ethereumjs-abi": "^0.6.8",
     "ethers": "^5.7.2",
     "web3": "^1.8.1"
   }

@@ -1,5 +1,17 @@
-const contractAddress = "0xb722486eDD24bEc2640dE4866d6A21C15C8cFCcE";
-const addr = "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada"
+//import { Biconomy } from '@biconomy/mexa';
+import {
+    helperAttributes,
+    getDomainSeperator,
+    getDataToSignForPersonalSign,
+    getDataToSignForEIP712,
+    buildForwardTxRequest,
+    getBiconomyForwarderConfig
+} from './biconomyForwardHelpers.js';
+
+let contractAddress = "0xb722486eDD24bEc2640dE4866d6A21C15C8cFCcE";
+const app_id = "ddff36b5-0136-4d20-9ba5-1129753e5c57";
+const api_key = "HziWYKHVP.429840c1-257c-4d41-aa7d-329202d56f63";
+let mintContractAddress = "0x34862Fc497ddfa7042838d113E01e5a99f5FfEfD";
 
 document.getElementById('connectWallet').addEventListener('click', async() => {
     start();
@@ -401,58 +413,14 @@ const abi = [
     }
 ];
 
-const aggregatorV3InterfaceABI = [
-    {
-      inputs: [],
-      name: "decimals",
-      outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "description",
-      outputs: [{ internalType: "string", name: "", type: "string" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [{ internalType: "uint80", name: "_roundId", type: "uint80" }],
-      name: "getRoundData",
-      outputs: [
-        { internalType: "uint80", name: "roundId", type: "uint80" },
-        { internalType: "int256", name: "answer", type: "int256" },
-        { internalType: "uint256", name: "startedAt", type: "uint256" },
-        { internalType: "uint256", name: "updatedAt", type: "uint256" },
-        { internalType: "uint80", name: "answeredInRound", type: "uint80" },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "latestRoundData",
-      outputs: [
-        { internalType: "uint80", name: "roundId", type: "uint80" },
-        { internalType: "int256", name: "answer", type: "int256" },
-        { internalType: "uint256", name: "startedAt", type: "uint256" },
-        { internalType: "uint256", name: "updatedAt", type: "uint256" },
-        { internalType: "uint80", name: "answeredInRound", type: "uint80" },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "version",
-      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-      stateMutability: "view",
-      type: "function",
-    },
-]
-
 const start = async() => {
     await window.ethereum.enable();
+    // const biconomy = new Biconomy.Biconomy(window.ethereum, {
+    //     apiKey: api_key,
+    //     debug: true,
+    //     contractAddresses: [contractAddress], 
+    // });
+
     const web3 = new Web3(window.ethereum);
     const contractInstance = new web3.eth.Contract(
         abi,
@@ -462,76 +430,82 @@ const start = async() => {
     const accounts = await web3.eth.getAccounts();
     console.log(accounts[0]);
     let userAddress =  accounts[0];
-    document.getElementById('connectWallet').innerText = userAddress.substring(0, 4) + "..."+userAddress.substring(36, 42);
     let networkId = await web3.eth.net.getId();
 
-    const priceFeed = new web3.eth.Contract(aggregatorV3InterfaceABI, addr)
-    const decimals = await priceFeed.methods.decimals().call();
-    console.log(decimals);
-    let price = await priceFeed.methods.latestRoundData().call();
-    console.log(price['answer']);
-    price = price['answer'] * Math.pow(10, -decimals);
-    console.log(price);
+    const txValue = await web3.utils.toWei('1', 'ether');
+    let functionSignature = contractInstance.methods.publishShares(accounts[0], "Arishmit", "Media", 1000, txValue).encodeABI();
 
-    //const response = await fetch('https://api.apilayer.com/exchangerates_data/live?base=USD&symbols=EUR,GBP', {
+    console.log(functionSignature)
 
-    const creators = await contractInstance.methods.getAllCreators().call();
-    console.log(creators);
+    const trustedForwarder = "0x9399BB24DBB5C4b782C70c2969F58716Ebbd6a3b";
+    let txGas = await web3.eth.estimateGas({
+        from: trustedForwarder, 
+        data: functionSignature,
+        to: contractAddress
+    }); 
 
-    var l = creators.length;
-    
+    let forwarder = await getBiconomyForwarderConfig(networkId);
+    console.log(forwarder);
+    let forwarderContract = new web3.eth.Contract(
+        forwarder.abi,
+        forwarder.address
+    );
 
-    for (var i = 0; i < l; i++) {
-        console.log(creators[i]);
-        let shareData = await contractInstance.methods.getCreatorShare(creators[i]).call();
-        console.log(shareData);
+    const batchNonce = await forwarderContract.methods.getNonce(accounts[0],10).call();
+    const gasLimitNum = Number(txGas);
+    const to = contractAddress;
+    const batchId = 10;
 
-        let pricePerNFT = shareData['_price'] * Math.pow(10, -18);
-        pricePerNFT = pricePerNFT * price;
-        await fetch("https://api.apilayer.com/fixer/convert?to=INR&from=USD&amount="+pricePerNFT, {
-            method: 'GET', // or 'PUT'
-            headers: {
-                'apikey': '2230qaQHz0OY06RmsAjC03iJjdiMtY75',
+    const request = await buildForwardTxRequest({account:userAddress,to,gasLimitNum,batchId,batchNonce,data:functionSignature});
+    console.log(request)
+
+    const network = await web3.eth.net.getId();
+    console.log(network);
+    const domainSeparator = await getDomainSeperator(network);
+    console.log(domainSeparator);
+    const dataToSign =  await getDataToSignForEIP712(request,networkId);
+   
+    web3.currentProvider.send({
+            jsonrpc: "2.0",
+            id: 999999999999,
+            method: "eth_signTypedData_v4",
+            params: [userAddress, dataToSign]
+        },
+        function (error, response) {
+            console.info(`User signature is ${response.result}`);
+            if (error || (response && response.error)) {
+                //showErrorMessage("Could not get user signature");
+                console.log(error);
+                console.log(response);
+            } else if (response && response.result) {
+                let sig = response.result;
+                console.log(sig);
+                //sendTransaction({userAddress, request, domainSeparator, sig, signatureType:biconomy.EIP712_SIGN});
+                const params = [request, domainSeparator, sig];
+                fetch(`https://api.biconomy.io/api/v2/meta-tx/native`, {
+                  method: "POST",
+                  headers: {
+                      "x-api-key": api_key,
+                      "Content-Type": "application/json;charset=utf-8",
+                },
+                  body: JSON.stringify({
+                      to: contractAddress,
+                      apiId: app_id,
+                      params: params,
+                      from: userAddress,
+                      signatureType: "EIP712_SIGN"
+                }),
+                })
+                .then((response) => response.json())
+                .then(async function (result) {
+                    console.log(result);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
             }
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            console.log('Success:', data['result']);
-            document.getElementById('creatorList').innerHTML += `<li>                                    
-                <div class="author_list_pp">
-                    <a href="author.html">
-                        <img class="lazy" src="images/author/author-1.jpg" alt="">
-                        <i class="fa fa-check"></i>
-                    </a>
-                </div>                                    
-                <div class="author_list_info">
-                    <a href="author.html">${shareData['name']}</a>
-                    <span>Genre: ${shareData['genre']}</span>
-                </div>
-                <div class="author_list_info_e">
-                    <span>${data['result'].toFixed(2)} INR</span>
-                    1% per NFT
-                </div>
-            </li>`+`<li>                                    
-            <div class="author_list_pp">
-                <a href="author.html">
-                    <img class="lazy" src="images/author/author-1.jpg" alt="">
-                    <i class="fa fa-check"></i>
-                </a>
-            </div>                                    
-            <div class="author_list_info">
-                <a href="author.html">${shareData['name']}</a>
-                <span>Genre: ${shareData['genre']}</span>
-            </div>
-            <div class="author_list_info_e">
-                <span>${data['result'].toFixed(2)} INR</span>
-                1% per NFT
-            </div>
-        </li>`
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-        //Do something
-    }
+        }
+    );
 }
+  
+
