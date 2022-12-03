@@ -56,7 +56,8 @@ contract Creator is ERC2771Recipient{
     address[] creators;
 
     event SharesPublished(address indexed _creator, uint indexed _token, uint indexed _numberOfTokens);
-    event PayoutReleased(address indexed _creator, uint indexed _token, uint indexed _payoutValue);
+    event PayoutReleased(address indexed _creator, uint indexed _token, uint indexed _payoutValue, address[] tokenOwners);
+    event Invested(address indexed _creator, address indexed _buyer, uint indexed tokenId, uint value);
 
     modifier onlyCreator(address _sender) {
         require(isCreator[_sender], "Only creator can publish token shares");
@@ -127,6 +128,8 @@ contract Creator is ERC2771Recipient{
         (bool success, ) = _creator.call{value: share._price * amount}("");
         require(success, "There was some error while trying to invest"); 
         creator.safeTransferFrom(_creator, _sender, id, amount, "");
+
+        emit Invested(_creator, _sender, id, share._price * amount);
     }
 
     function releasePayouts() external payable onlyCreator(msg.sender){
@@ -140,7 +143,7 @@ contract Creator is ERC2771Recipient{
         payout.totalAmount = msg.value;
         payout.amountPerBeliever = SafeMath.div(msg.value, share._totalAmount);
 
-        emit PayoutReleased(msg.sender, id, msg.value);
+        emit PayoutReleased(msg.sender, id, msg.value, tokenOwners[id]);
     } 
 
     function getPayoutDetails(address _creator) external view returns(Payout memory) {

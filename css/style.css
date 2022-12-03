@@ -8160,7 +8160,7 @@ a.btn-right {
 }
 
 .pl30{padding-left: 30px;}
-.pr30{padding-right: 30px;})
+.pr30{padding-right: 30px;}
 
 /* margin top */
 
@@ -10282,7 +10282,7 @@ i.bg-color-secondary {
         font-family: "FontAwesome";
       }
 
-      #de-carousel .carousel-indicators li{x
+      #de-carousel .carousel-indicators li{
         height: 8px;
         margin: 0 6px;
         display: block;
@@ -15744,7 +15744,7 @@ a.btn-slider:hover {
     margin: 0 6px;
     display: inline-block;
     zoom: 1;
-    *display: inline;
+    display: inline;
 }
 
 .testi-slider .flex-control-paging li a {
