@@ -1,19 +1,26 @@
 const Web3 = require('web3');
-const web3 = new Web3('HTTPS_ENDPOINT');
-const contractAddress = 'CONTRACT_ADDRESS';
-const contractAbi = require('./ABI_JSON');
-const contract = new web3.eth.Contract(contractAbi, contractAddress);
+const dotenv = require('dotenv');
+dotenv.config({path:'../.env'}); 
 
-const PAST_EVENT = async () => {
-  await contract.getPastEvents('EVENT_NAME',
+const PAST_EVENT = async (TXN_HASH) => {
+  
+  await window.ethereum.enable();
+  const web3 = new Web3(window.ethereum);
+  
+  const contractAddress = process.env.CONTRACT_ADDRESS;
+  const contractAbi = require('../build/contracts/Creator.json');
+  const contract = new web3.eth.Contract(contractAbi, contractAddress);
+
+  const data = await web3.eth.getTransaction(TXN_HASH);
+  await contract.getPastEvents('SharesPublished',
     {
       filter: { INDEXED_PARAMETER: VALUE },
-      fromBlock: BLOCK_NUMBER,
-      toBlock: BLOCK_NUMBER,
+      fromBlock: data.blockNumber,
+      toBlock: data.blockNumber,
     },
     (err, events) => {
       console.log(events);
     });
 };
 
-PAST_EVENT();
+PAST_EVENT('0x4bf3b93378835aae3ce65e0403211e85ff809bb25e04ffb04647a40437e51b97');

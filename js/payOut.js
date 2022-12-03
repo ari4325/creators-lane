@@ -1,7 +1,9 @@
+import { multicast } from "./sendNotifications.mjs";
+
 const contractAddress = "0xb722486eDD24bEc2640dE4866d6A21C15C8cFCcE";
 const addr = "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada"
 
-document.getElementById('connectWallet').addEventListener('click', async() => {
+document.getElementById('payout').addEventListener('click', async() => {
     start();
 })
 
@@ -465,58 +467,18 @@ const start = async() => {
     document.getElementById('connectWallet').innerText = userAddress.substring(0, 4) + "..."+userAddress.substring(36, 42);
     let networkId = await web3.eth.net.getId();
 
-    const priceFeed = new web3.eth.Contract(aggregatorV3InterfaceABI, addr)
-    const decimals = await priceFeed.methods.decimals().call();
-    console.log(decimals);
-    let price = await priceFeed.methods.latestRoundData().call();
-    console.log(price['answer']);
-    price = price['answer'] * Math.pow(10, -decimals);
-    console.log(price);
-
-    //const response = await fetch('https://api.apilayer.com/exchangerates_data/live?base=USD&symbols=EUR,GBP', {
-
-    const creators = await contractInstance.methods.getAllCreators().call();
-    console.log(creators);
-
-    var l = creators.length;
-    
-
-    for (var i = 0; i < l; i++) {
-        console.log(creators[i]);
-        let shareData = await contractInstance.methods.getCreatorShare(creators[i]).call();
-        console.log(shareData);
-
-        let pricePerNFT = shareData['_price'] * Math.pow(10, -18);
-        pricePerNFT = pricePerNFT * price;
-        await fetch("https://api.apilayer.com/fixer/convert?to=INR&from=USD&amount="+pricePerNFT, {
-            method: 'GET', // or 'PUT'
-            headers: {
-                'apikey': '2230qaQHz0OY06RmsAjC03iJjdiMtY75',
-            }
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            console.log('Success:', data['result']);
-            document.getElementById('creatorList').innerHTML += `<li>                                    
-                <div class="author_list_pp">
-                    <a href="author.html">
-                        <img class="lazy" src="images/author/author-1.jpg" alt="">
-                        <i class="fa fa-check"></i>
-                    </a>
-                </div>                                    
-                <div class="author_list_info">
-                    <a href="author.html">${shareData['name']}</a>
-                    <span>Genre: ${shareData['genre']}</span>
-                </div>
-                <div class="author_list_info_e">
-                    <span>${data['result'].toFixed(2)} INR</span>
-                    1% per NFT
-                </div>
-            </li>`
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-        //Do something
-    }
+    const payoutDone = await contractInstance.methods.releasePayouts().send({ from: userAddress})
+    .on('receipt', function(receipt){
+      console.log(receipt.events);
+      contractInstance.events.PayoutReleased(() => {
+      })
+      .on('data', function(event){
+          console.log('Event:', event);
+          console.log('Creator Wallet Address: ',event.returnValues._creator, event.returnValues._token, event.returnValues._payoutValue, event.returnValues.tokenOwners);
+          multicast(event.returnValues._creator, event.returnValues._token, event.returnValues.tokenOwners);
+      })
+      .on('error', function(error, receipt) {
+          console.log('Error:', error, receipt);
+      });    
+   });
 }

@@ -1,10 +1,6 @@
 const contractAddress = "0xb722486eDD24bEc2640dE4866d6A21C15C8cFCcE";
 const addr = "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada"
 
-document.getElementById('connectWallet').addEventListener('click', async() => {
-    start();
-})
-
 const abi = [
     {
         "inputs": [
@@ -451,72 +447,73 @@ const aggregatorV3InterfaceABI = [
     },
 ]
 
-const start = async() => {
+async function load() {
     await window.ethereum.enable();
-    const web3 = new Web3(window.ethereum);
-    const contractInstance = new web3.eth.Contract(
-        abi,
-        contractAddress
-    );
+const web3 = new Web3(window.ethereum);
+const contractInstance = new web3.eth.Contract(
+    abi,
+    contractAddress
+);
 
-    const accounts = await web3.eth.getAccounts();
-    console.log(accounts[0]);
-    let userAddress =  accounts[0];
-    document.getElementById('connectWallet').innerText = userAddress.substring(0, 4) + "..."+userAddress.substring(36, 42);
-    let networkId = await web3.eth.net.getId();
+const accounts = await web3.eth.getAccounts();
+console.log(accounts[0]);
+let userAddress =  accounts[0];
+document.getElementById('connectWallet').innerText = userAddress.substring(0, 4) + "..."+userAddress.substring(36, 42);
+let networkId = await web3.eth.net.getId();
 
-    const priceFeed = new web3.eth.Contract(aggregatorV3InterfaceABI, addr)
-    const decimals = await priceFeed.methods.decimals().call();
-    console.log(decimals);
-    let price = await priceFeed.methods.latestRoundData().call();
-    console.log(price['answer']);
-    price = price['answer'] * Math.pow(10, -decimals);
-    console.log(price);
+const priceFeed = new web3.eth.Contract(aggregatorV3InterfaceABI, addr)
+const decimals = await priceFeed.methods.decimals().call();
+console.log(decimals);
+let price = await priceFeed.methods.latestRoundData().call();
+console.log(price['answer']);
+price = price['answer'] * Math.pow(10, -decimals);
+console.log(price);
 
-    //const response = await fetch('https://api.apilayer.com/exchangerates_data/live?base=USD&symbols=EUR,GBP', {
+//const response = await fetch('https://api.apilayer.com/exchangerates_data/live?base=USD&symbols=EUR,GBP', {
 
-    const creators = await contractInstance.methods.getAllCreators().call();
-    console.log(creators);
+const creators = await contractInstance.methods.getAllCreators().call();
+console.log(creators);
 
-    var l = creators.length;
-    
+var l = creators.length;
 
-    for (var i = 0; i < l; i++) {
-        console.log(creators[i]);
-        let shareData = await contractInstance.methods.getCreatorShare(creators[i]).call();
-        console.log(shareData);
 
-        let pricePerNFT = shareData['_price'] * Math.pow(10, -18);
-        pricePerNFT = pricePerNFT * price;
-        await fetch("https://api.apilayer.com/fixer/convert?to=INR&from=USD&amount="+pricePerNFT, {
-            method: 'GET', // or 'PUT'
-            headers: {
-                'apikey': '2230qaQHz0OY06RmsAjC03iJjdiMtY75',
-            }
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            console.log('Success:', data['result']);
-            document.getElementById('creatorList').innerHTML += `<li>                                    
-                <div class="author_list_pp">
-                    <a href="author.html">
-                        <img class="lazy" src="images/author/author-1.jpg" alt="">
-                        <i class="fa fa-check"></i>
-                    </a>
-                </div>                                    
-                <div class="author_list_info">
-                    <a href="author.html">${shareData['name']}</a>
-                    <span>Genre: ${shareData['genre']}</span>
-                </div>
-                <div class="author_list_info_e">
-                    <span>${data['result'].toFixed(2)} INR</span>
-                    1% per NFT
-                </div>
-            </li>`
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-        //Do something
-    }
+for (var i = 0; i < l; i++) {
+    console.log(creators[i]);
+    let shareData = await contractInstance.methods.getCreatorShare(creators[i]).call();
+    console.log(shareData);
+
+    let pricePerNFT = shareData['_price'] * Math.pow(10, -18);
+    pricePerNFT = pricePerNFT * price;
+    await fetch("https://api.apilayer.com/fixer/convert?to=INR&from=USD&amount="+pricePerNFT, {
+        method: 'GET', // or 'PUT'
+        headers: {
+            'apikey': '2230qaQHz0OY06RmsAjC03iJjdiMtY75',
+        }
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        console.log('Success:', data['result']);
+        document.getElementById('creatorList').innerHTML += `<li>                                    
+            <div class="author_list_pp">
+                <a href="author.html">
+                    <img class="lazy" src="images/author/author-1.jpg" alt="">
+                    <i class="fa fa-check"></i>
+                </a>
+            </div>                                    
+            <div class="author_list_info">
+                <a href="author.html">${shareData['name']}</a>
+                <span>Genre: ${shareData['genre']}</span>
+            </div>
+            <div class="author_list_info_e">
+                <span>${data['result'].toFixed(2)} INR</span>
+                1% per NFT
+            </div>
+        </li>`
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
 }
+}
+
+load();
