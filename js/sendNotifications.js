@@ -6,6 +6,37 @@ dotenv.config();
 const Pkey = `0x${process.env.PK}`;
 const signer = new ethers.Wallet(Pkey);
 
+const broadCast = async(creator) => {
+  await sendNotification(
+    1,
+    `Creator ${creator} has launched NFTs`,
+    `You can go and buy one for you and help creator as well as yourself`,
+    '',
+    '',
+  );
+}
+
+const unicast = async(creator, buyer, id, value) => {
+  await sendNotification(
+    3,
+    `Congratulation another one NFT is sold!!!`,
+    `Congratulations creator ${buyer} has bought your NFT ${id} for ${value}`,
+    '',
+    creator
+  );
+}
+
+const multicast = async(creator, id, recipients) => {
+  await sendNotification(
+    4,
+    `Hola believers ${creator} has released payouts`,
+    `Payouts for token ${id} are released kindly visit the platform to claim your payout`,
+    '', //add link here
+    recipients
+  );
+}
+
+
 const sendNotification = async(type, title, body, cta, recipient) => {
   try {
     let notificationText = {
