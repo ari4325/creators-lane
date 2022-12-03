@@ -23,4 +23,4 @@ const PAST_EVENT = async (TXN_HASH) => {
     });
 };
 
-PAST_EVENT();
+PAST_EVENT('0x4bf3b93378835aae3ce65e0403211e85ff809bb25e04ffb04647a40437e51b97');
