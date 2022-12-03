@@ -20,6 +20,7 @@
     <link href="css/coloring-gradient.css" rel="stylesheet" type="text/css" />
     <!-- custom font -->
     <link href="css/custom-font-3.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 </head>
 
 <body class="switch-scheme">
@@ -179,7 +180,7 @@
                                     </li>
                                 </ul>
                                 <div class="menu_side_area">
-                                    <a href="07_modern-wallet.html" class="btn-main btn-wallet"><i class="icon_wallet_alt"></i><span>Connect Wallet</span></a>
+                                    <div class="btn-main btn-wallet" id="connectWallet"><i class="icon_wallet_alt"></i><span>Connect Wallet</span></div>
                                     <span href="#" id="switch_scheme">
                                         <i class="ss_dark fa fa-moon-o"></i>
                                         <i class="ss_light fa fa-sun-o"></i>
@@ -208,39 +209,8 @@
                             </div>
                         </div>
                         <div class="col-md-12 wow fadeIn">
-                            <ol class="author_list alt-2 d-col-3">
-                                <li>                                    
-                                    <div class="author_list_pp">
-                                        <a href="author.html">
-                                            <img class="lazy" src="images/author/author-1.jpg" alt="">
-                                            <i class="fa fa-check"></i>
-                                        </a>
-                                    </div>                                    
-                                    <div class="author_list_info">
-                                        <a href="author.html">SOIC</a>
-                                        <span>Genre: Finance</span>
-                                    </div>
-                                    <div class="author_list_info_e">
-                                        <span>1200 INR</span>
-                                        1% per NFT
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="author_list_pp">
-                                        <a href="author.html">                                    
-                                            <img class="lazy" src="images/author/author-2.jpg" alt="">
-                                            <i class="fa fa-check"></i>
-                                        </a>
-                                    </div>
-                                    <div class="author_list_info">
-                                        <a href="author.html">Shashank Udupa </a>
-                                        <span>Genre: Finance</span>
-                                    </div>
-                                    <div class="author_list_info_e">
-                                        <span>500 INR</span>
-                                        0.5% per NFT
-                                    </div>
-                                </li>
+                            <ol class="author_list alt-2 d-col-3" id="creatorList">
+                        
                                 
                                 
                                 
@@ -283,6 +253,7 @@
     ================================================== -->
     <script src="js/plugins.js"></script>
     <script src="js/designesia.js"></script>
+    <script src="js/explore.js"></script>
 
 </body>
 </html>
