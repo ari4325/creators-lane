@@ -626,7 +626,7 @@ async function storeNFTandMint(imagePath, genre, fundUse, equity, royalties, nft
         }
     );
 
-    broadCast(accounts[0]);
+    // broadCast(accounts[0]);
 }
 
 async function main(filePath, genre, fundUse, equity, royalties, nftcount) {
