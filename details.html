@@ -21,6 +21,8 @@
     <!-- custom font -->
     <link href="css/custom-font-3.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+        type="application/javascript"></script>
 </head>
 
 <body class="dark-scheme">
@@ -83,19 +85,17 @@
                     <div class="row g-5">
                         <div class="col-md-6 text-center">
                             <div class="nft-image-wrapper" style="margin-top: -7%;">
-                                <img src="images/items/big-6.jpg" class="image-autosize img-fluid img-rounded mb-sm-30" alt="">
+                                <img id="creator_image" src="" class="image-autosize img-fluid img-rounded mb-sm-30" alt="">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="item_info">
                                 <h2 id="name">Creator Name</h2>
-                                <p> Bio: </p>
-                                <p>Requirements of funds for: Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-
+                               
                                 <div class="d-flex flex-row">
                                     
                                     <div>
-                                        <h6>Equity % per NFT owned :</h6>
+                                        <h6 id="equity"></h6>
                                     </div>
                                 </div>
 
@@ -135,7 +135,7 @@
                                 <div class="spacer-10"></div>
 
                                 <h6>Price</h6>
-                                <div class="nft-item-price" id="price"><span>₹150</span></div>
+                                <div class="nft-item-price" ><span id="price"></span></div>
 
                                 <!-- Button trigger modal -->
                                 <a href="#" class="btn-main btn-lg" data-bs-toggle="modal" data-bs-target="#buy_now">
@@ -197,7 +197,7 @@
     <script src="js/plugins.js"></script>
     <script src="js/designesia.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="js/details.js"></script>
+    <script src="js/details.js" type="module"></script>
 
 </body>
 

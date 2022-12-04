@@ -17,6 +17,9 @@
     <!-- color scheme -->
     <link id="colors" href="css/colors/scheme-02.css" rel="stylesheet" type="text/css" />
     <link href="css/coloring.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+        type="application/javascript"></script>
 </head>
 
 <body class="dark-scheme">
@@ -108,35 +111,9 @@
                                   <th scope="col">Pay</th>
                                 </tr>
                               </thead>
-                              <tbody>
-                                <tr>
-                                    <th>
-                                  <div class="coll_list_pp">
-                                    <img class="lazy" src="images/author/author-1.jpg" alt="">
-                                    <i class="fa fa-check"></i>
-                                  </div>  
-                                  SOIC</th>
-                                  <td>Education</td>
-                                  <td class="d-plus">₹15000</td>
-                                  <td class="d-plus">150</td>
-                                  <td><a href="#" class="btn-main btn-lg" data-bs-toggle="modal" data-bs-target="#buy_now">
-                                  Pay
-                                </a></td>
-                                </tr>
-                                <tr>
-                                 <th scope="row">
-                                  <div class="coll_list_pp">
-                                    <img class="lazy" src="images/author/author-2.jpg" alt="">
-                                    <i class="fa fa-check"></i>
-                                  </div>  
-                                  Shashank Udupa</th>
-                                  <td>Finance</td>
-                                  <td class="d-plus">₹10000</td>
-                                  <td class="d-plus">120</td>
-                                  <td><a href="#" class="btn-main btn-lg" data-bs-toggle="modal" data-bs-target="#buy_now">
-                                  Pay
-                                </a></td>
-                                </tr>
+                              <tbody id="creatorList">
+                                
+                                
                                
                               </tbody>
                             </table>
@@ -164,7 +141,7 @@
                     <h6>Total amount to paid (in MATIC)</h6>
                     <input type="text" name="buy_now_qty" id="buy_now_qty" class="form-control" value="" />
                    
-                    <a target="_blank" id="payout" class="btn-main btn-fullwidth" style="border-radius: 5px; padding: 4%;">Pay</a>
+                    <div target="_blank" id="payout" class="btn-main btn-fullwidth" style="border-radius: 5px; padding: 4%;">Pay</div>
                 </div>
               </div>
             </div>
@@ -190,7 +167,8 @@
     ================================================== -->
     <script src="js/plugins.js"></script>
     <script src="js/designesia.js"></script>
-    <script src="js/payOut.js"></script>
+    <!--script src="js/payOut.js"></script!-->
+    <script src="js/brandDashboard.js"></script>
 
 </body>
 

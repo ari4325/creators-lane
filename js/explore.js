@@ -544,7 +544,7 @@ for (var i = 0; i < l; i++) {
             </a>
         </div>                                    
         <div class="author_list_info">
-            <a href="author.html?id=${shareData['_tokenId']}">${shareData['name']}</a>
+            <a href="details.html?id=${shareData['_tokenId']}">${shareData['name']}</a>
             <span>Genre: ${shareData['genre']}</span>
         </div>
         <div class="author_list_info_e">

@@ -542,13 +542,13 @@ const start = async() => {
             console.log('Success:', data['result']);
             document.getElementById('creatorList').innerHTML += `<li>                                    
                 <div class="author_list_pp">
-                    <a href="author.html">
+                    <a href="details.html?id=${shareData['_tokenId']}">
                         <img class="lazy" src=${shareData['uri']} alt="">
                         <i class="fa fa-check"></i>
                     </a>
                 </div>                                    
                 <div class="author_list_info">
-                    <a href="author.html?id=${shareData['_tokenId']}">${shareData['name']}</a>
+                    <a href="details.html?id=${shareData['_tokenId']}">${shareData['name']}</a>
                     <span>Genre: ${shareData['genre']}</span>
                 </div>
                 <div class="author_list_info_e">

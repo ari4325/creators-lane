@@ -1,16 +1,9 @@
 const contractAddress = "0x811737663d9ed628ddc71418c16dcc87d5f3d450";
 const addr = "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada"
-const app_id = "ec920c4f-7773-48bd-8acb-8505cb41cb26";
-const api_key = "HziWYKHVP.429840c1-257c-4d41-aa7d-329202d56f63";
 
-import {
-  helperAttributes,
-  getDomainSeperator,
-  getDataToSignForPersonalSign,
-  getDataToSignForEIP712,
-  buildForwardTxRequest,
-  getBiconomyForwarderConfig
-} from './biconomyForwardHelpers.js';
+document.getElementById('connectWallet').addEventListener('click', async() => {
+    start();
+})
 
 const abi = [
     {
@@ -501,179 +494,85 @@ const aggregatorV3InterfaceABI = [
     },
 ]
 
-let accounts, web3, contractInstance, userAddress, networkId;
-
-async function load() {
+const start = async() => {
     await window.ethereum.enable();
-    web3 = new Web3(window.ethereum);
-    contractInstance = new web3.eth.Contract(
+    const web3 = new Web3(window.ethereum);
+    const contractInstance = new web3.eth.Contract(
         abi,
         contractAddress
     );
 
-    accounts = await web3.eth.getAccounts();
+    const accounts = await web3.eth.getAccounts();
     console.log(accounts[0]);
-    userAddress =  accounts[0];
+    let userAddress =  accounts[0];
     document.getElementById('connectWallet').innerText = userAddress.substring(0, 4) + "..."+userAddress.substring(36, 42);
-    networkId = await web3.eth.net.getId();
-}
+    let networkId = await web3.eth.net.getId();
 
-load();
+    const priceFeed = new web3.eth.Contract(aggregatorV3InterfaceABI, addr)
+    const decimals = await priceFeed.methods.decimals().call();
+    console.log(decimals);
+    let price = await priceFeed.methods.latestRoundData().call();
+    console.log(price['answer']);
+    price = price['answer'] * Math.pow(10, -decimals);
+    console.log(price);
 
-async function storeNFTandMint(imagePath, genre, fundUse, equity, royalties, nftcount) {
-    // var bodyFormData = new FormData();
-    // bodyFormData.append('file', imagePath);
-    // bodyFormData.append('meta', {
-    //   genre: genre, 
-    //   name: fundUse, 
-    //   equity: equity, 
-    //   royalties: royalties, 
-    //   nftcount: nftcount,  
-    // })
-    // const result = await axios.post('https://api.nft.storage/store',
-    // {
-    //   data: bodyFormData
-    // },
-    // {
-    //   headers: {
-    //     'Authorization': `Bearer ${NFT_STORAGE_KEY}`,
-    //     'Content-Type': `multipart/form-data`,
-    //   }
-    // })
+    //const response = await fetch('https://api.apilayer.com/exchangerates_data/live?base=USD&symbols=EUR,GBP', {
 
-    const result = await axios({
-        method: 'post',
-        url: 'https://api.nft.storage/upload',
-        data: imagePath,
-        headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEQ4ZWY0RGY5ZDhFNjY1MWEwNTFBMzQxYjRGNDMzM0ZERWRmNjIyOTAiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1ODAzMDAxMjIyNSwibmFtZSI6IkVhcnRoUmFpc2VyIn0.go2tdDF2TJ4Se7qrD3vasa8mgjVRqlvIWRbUBEkvQS4' }
-    })
-    alert("Stored Successfully With Hash: " + result['data']['value']['cid']);
+    const creators = await contractInstance.methods.getAllCreators().call();
+    console.log(creators);
 
-    const txValue = await web3.utils.toWei((royalties/nftcount)+"", 'ether');
-    console.log(1);
-    let functionSignature = contractInstance.methods.publishShares(accounts[0]+"", fundUse+"", genre+"", nftcount, txValue, equity, "https://"+result['data']['value']['cid']+".ipfs.nftstorage.link").encodeABI();
-    console.log(2);
-    console.log(functionSignature)
+    var l = creators.length;
+    
 
-    const trustedForwarder = "0x9399BB24DBB5C4b782C70c2969F58716Ebbd6a3b";
-    let txGas = await web3.eth.estimateGas({
-        from: trustedForwarder, 
-        data: functionSignature,
-        to: contractAddress
-    }); 
+    for (var i = 0; i < l; i++) {
+        console.log(creators[i]);
+        let shareData = await contractInstance.methods.getCreatorShare(creators[i]).call();
+        console.log(shareData);
 
-    let forwarder = await getBiconomyForwarderConfig(networkId);
-    console.log(forwarder);
-    let forwarderContract = new web3.eth.Contract(
-        forwarder.abi,
-        forwarder.address
-    );
+        let pricePerNFT = shareData['_price'] * Math.pow(10, -18);
+        pricePerNFT = pricePerNFT * price;
 
-    const batchNonce = await forwarderContract.methods.getNonce(accounts[0],10).call();
-    const gasLimitNum = Number(txGas);
-    const to = contractAddress;
-    const batchId = 10;
+        const believers = await contractInstance.methods.getTokenOwners(shareData['_tokenId']).call();
 
-    const request = await buildForwardTxRequest({account:userAddress,to,gasLimitNum,batchId,batchNonce,data:functionSignature});
-    console.log(request)
-
-    const network = await web3.eth.net.getId();
-    console.log(network);
-    const domainSeparator = await getDomainSeperator(network);
-    console.log(domainSeparator);
-    const dataToSign =  await getDataToSignForEIP712(request,networkId);
-   
-    web3.currentProvider.send({
-            jsonrpc: "2.0",
-            id: 999999999999,
-            method: "eth_signTypedData_v4",
-            params: [userAddress, dataToSign]
-        },
-        function (error, response) {
-            console.info(`User signature is ${response.result}`);
-            if (error || (response && response.error)) {
-                //showErrorMessage("Could not get user signature");
-                console.log(error);
-                console.log(response);
-            } else if (response && response.result) {
-                let sig = response.result;
-                console.log(sig);
-                //sendTransaction({userAddress, request, domainSeparator, sig, signatureType:biconomy.EIP712_SIGN});
-                const params = [request, domainSeparator, sig];
-                fetch(`https://api.biconomy.io/api/v2/meta-tx/native`, {
-                  method: "POST",
-                  headers: {
-                      "x-api-key": api_key,
-                      "Content-Type": "application/json;charset=utf-8",
-                },
-                  body: JSON.stringify({
-                      to: contractAddress,
-                      apiId: app_id,
-                      params: params,
-                      from: userAddress,
-                      signatureType: "EIP712_SIGN"
-                }),
-                })
-                .then((response) => response.json())
-                .then(async function (result) {
-                    console.log(result);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+        await fetch("https://api.apilayer.com/fixer/convert?to=INR&from=USD&amount="+pricePerNFT, {
+            method: 'GET', // or 'PUT'
+            headers: {
+                'apikey': '2230qaQHz0OY06RmsAjC03iJjdiMtY75',
             }
-        }
-    );
-
-
-
-}
-
-async function main(filePath, genre, fundUse, equity, royalties, nftcount) {
-    const result = await storeNFTandMint(filePath, genre, fundUse, equity, royalties, nftcount);
-    console.log(result)
-}
-
-document.getElementById('submit_nft').addEventListener('click', async() => {
-  console.log('clicked');
-  let filePath = document.getElementById('upload_file').files[0];
-
-  var fileReader = new FileReader();
-
-  fileReader.onload = function (event) {
-    document.getElementById('preview').setAttribute("src", event.target.result);
-  }
-
-  fileReader.readAsDataURL(filePath);
-
-  console.log(filePath);
-  const fileInput = document.getElementById('upload_file');
-  fileInput.onchange = () => {
-    const selectedFile = fileInput.files[0];
-
-    var fileReader = new FileReader();
-
-    fileReader.onload = function (event) {
-      document.getElementById('preview').setAttribute("src", event.target.result);
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('Success:', data['result']);
+            document.getElementById('creatorList').innerHTML += `<tr>
+                    <th>
+                <div class="coll_list_pp">
+                    <img class="lazy" src="${shareData['uri']}" alt="">
+                    <i class="fa fa-check"></i>
+                </div>  
+                ${shareData['name']}</th>
+                <td>Education</td>
+                <td class="d-plus">${(shareData['_fundsRaised'] * Math.pow(10, -18) * data['result']).toFixed(2)} INR</td>
+                <td class="d-plus">${believers.length}</td>
+                <td><a href="#" class="btn-main btn-lg" data-bs-toggle="modal" data-bs-target="#buy_now">
+                Pay
+                </a></td>
+                </tr>`
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+        //Do something
     }
 
-    fileReader.readAsDataURL(selectedFile);
+    document.getElementById('payout').addEventListener('click', async() => {
+        await contractInstance.methods.releasePayouts().send({ from: userAddress, to: contractAddress, value: await web3.utils.toWei(document.getElementById('buy_now_qty').value+"", "ether")})
+        .on('receipt', function(receipt){
+            console.log(receipt);
+        })
+        .on('error', function(error, receipt) {
+            console.log('Error:', error, receipt);
+        });
+    })
+}
 
-    console.log(selectedFile);
-  }
-
-  let genre = document.getElementById('genre');
-  console.log(genre.value)
-  let selected = genre.value;
-  let name = document.getElementById('item_title').value;
-  let equity = document.getElementById('item_royalties').value;
-  let funds = document.getElementById('funds_to_raise').value;
-  let nftcount = document.getElementById('item_count').value;
-  console.log(selected, name, equity, funds, nftcount);
-
-  document.getElementById('preview_name').innerText = name;
-  document.getElementById('preview_genre').innerText = selected;
-  document.getElementById('preview_price').innerText = (funds / nftcount) + " MATIC";
-  document.getElementById('preview_equity').innerText = "Equity per share: " + (equity/nftcount) + "%";
-  await storeNFTandMint(filePath, selected, name, equity, funds, nftcount);
-});
+start();

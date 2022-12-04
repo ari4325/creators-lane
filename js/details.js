@@ -4,6 +4,15 @@ let price;
 const app_id = "e22ca4b1-ed92-4cbb-8f38-a62f30f0045e";
 const api_key = "HziWYKHVP.429840c1-257c-4d41-aa7d-329202d56f63";
 
+import {
+    helperAttributes,
+    getDomainSeperator,
+    getDataToSignForPersonalSign,
+    getDataToSignForEIP712,
+    buildForwardTxRequest,
+    getBiconomyForwarderConfig
+  } from './biconomyForwardHelpers.js';
+
 const abi = [
     {
         "inputs": [
@@ -526,9 +535,11 @@ async function load() {
     console.log(creators);
     let shareData = await contractInstance.methods.getCreatorShare(creators[0]).call();
     console.log(shareData);
+    document.getElementById('creator_image').setAttribute('src', shareData['uri']);
     document.getElementById('name').innerText = shareData['name'];
     document.getElementById('creator').innerText = shareData['name'];
     document.getElementById('available').innerText = (shareData['_totalAmount'] - shareData['_bought']) + " Available" ;
+    document.getElementById('equity').innerText = "Equity per NFT: "+(shareData['equity'] / shareData['_totalAmount']);
 
 
     let pricePerNFT = shareData['_price'] * Math.pow(10, -18);
@@ -572,7 +583,7 @@ document.getElementById('buyBtn').addEventListener('click', async() => {
         "key": "rzp_test_ZsOauyCO54085l", 
         "amount": document.getElementById('buy_now_qty').value * price * 100, 
         "currency": "INR",
-        "order_id": "order_KnbjZIdbWuMiKH", 
+        "order_id": "order_Knfpn2n97itJRG", 
         "handler": async function (response){
             alert(response.razorpay_payment_id);
             alert(response.razorpay_order_id);
@@ -590,7 +601,7 @@ document.getElementById('buyBtn').addEventListener('click', async() => {
             let networkId = await web3.eth.net.getId();
 
             const txValue = await web3.utils.toWei('1', 'ether');
-            let functionSignature = contractInstance.methods.invest(accounts[0], id, 10).encodeABI();
+            let functionSignature = contractInstance.methods.invest(accounts[0], id, 1).encodeABI();
 
             console.log(functionSignature)
 
