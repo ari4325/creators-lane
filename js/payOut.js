@@ -4,6 +4,7 @@ const contractAddress = "0xb722486eDD24bEc2640dE4866d6A21C15C8cFCcE";
 const addr = "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada"
 
 document.getElementById('payout').addEventListener('click', async() => {
+  console.log('inside payout');
     start();
 })
 
