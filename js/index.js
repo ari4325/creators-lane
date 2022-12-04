@@ -543,17 +543,17 @@ const start = async() => {
             document.getElementById('creatorList').innerHTML += `<li>                                    
                 <div class="author_list_pp">
                     <a href="author.html">
-                        <img class="lazy" src="images/author/author-1.jpg" alt="">
+                        <img class="lazy" src=${shareData['uri']} alt="">
                         <i class="fa fa-check"></i>
                     </a>
                 </div>                                    
                 <div class="author_list_info">
-                    <a href="author.html">${shareData['name']}</a>
+                    <a href="author.html?id=${shareData['_tokenId']}">${shareData['name']}</a>
                     <span>Genre: ${shareData['genre']}</span>
                 </div>
                 <div class="author_list_info_e">
                     <span>${data['result'].toFixed(2)} INR</span>
-                    1% per NFT
+                    ${(shareData['equity'] / shareData['_totalAmount']).toFixed(2)}% per NFT
                 </div>
             </li>`
         })

@@ -17,6 +17,9 @@
     <!-- color scheme -->
     <link id="colors" href="css/colors/scheme-02.css" rel="stylesheet" type="text/css" />
     <link href="css/coloring.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+        type="application/javascript"></script>
 </head>
 
 <body class="dark-scheme">
@@ -107,7 +110,7 @@
 
                                     <div class="d-create-file">
                                         <p id="file_name">Add your PNG or JPG image. (Ideal Dimensions: 1200*1200 px)</p>
-                                        <input type="button" id="get_file" class="btn-main" value="Browse">
+                                        <input type="button" id="get_file" class="btn-main" value="Browse" onchange="previewImage()">
                                         <input type="file" id="upload_file">
                                     </div>
 
@@ -131,13 +134,12 @@
 
                                     <h5>Genre</h5>
                                     <div id="item_collection" class="dropdown fullwidth mb20">
-                                        <a href="#" class="btn-selector">Select Collection</a>
-                                        <ul id="genre">
-                                            <li><span>Finance</span></li>
-                                            <li><span>Entertainment</span></li>
-                                            <li><span>Education</span></li>
-                                            <li><span>Art</span></li>
-                                        </ul>
+                                        <select id="genre" class="btn-selector">
+                                            <option>Finance</option>
+                                            <option>Entertainment</option>
+                                            <option>Education</option>
+                                            <option>Art</option>
+                                        </select>
                                     </div>
 
                                     <div class="spacer-single"></div>
@@ -155,7 +157,7 @@
 
 
                                     <h5>Total amount to raise</h5>
-                                    <input type="text" name="item_royalties" id="item_royalties" class="form-control" placeholder="total amount you want to raise" />
+                                    <input type="text" name="item_royalties" id="funds_to_raise" class="form-control" placeholder="total amount you want to raise (in MATIC)" />
 
                                     <div class="spacer-single"></div>
 
@@ -184,21 +186,21 @@
                                     </div>
                                     <div class="nft__item_wrap">
                                         <a href="#">
-                                            <img src="images/collections/coll-item-2.jpg" id="get_file_2" class="lazy nft__item_preview" alt="">
+                                            <img src="" id="preview" class="lazy nft__item_preview" alt="">
                                         </a>
                                     </div>
                                     <div>
                                         <a href="#">
-                                            <h4>Name Surname</h4>
+                                            <h4 id="preview_name"></h4>
                                         </a>
                                         <div class="nft__item_click">
                                         <span></span>
                                     </div>
-                                    <span><b>Genre: Finance</b></span>
-                                    <div class="nft__item_price">
-                                            ₹150 per NFT
+                                    <span><b id="preview_genre"></b></span>
+                                    <div class="nft__item_price" id="preview_price">
+                                            
                                         </div>
-                                             <span><b>Equity % per NFT: 2.5 </b></span>                  
+                                             <span><b id="preview_equity"></b></span>                  
                                     </div> 
                                 </div>
                             </div>                                         

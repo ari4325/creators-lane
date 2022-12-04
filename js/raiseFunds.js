@@ -9,7 +9,7 @@ import {
 } from './biconomyForwardHelpers.js';
 
 let contractAddress = "0x811737663d9ed628ddc71418c16dcc87d5f3d450";
-const app_id = "ddff36b5-0136-4d20-9ba5-1129753e5c57";
+const app_id = "ec920c4f-7773-48bd-8acb-8505cb41cb26";
 const api_key = "HziWYKHVP.429840c1-257c-4d41-aa7d-329202d56f63";
 let mintContractAddress = "0x34862Fc497ddfa7042838d113E01e5a99f5FfEfD";
 
