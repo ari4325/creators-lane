@@ -11,6 +11,7 @@ import {
   buildForwardTxRequest,
   getBiconomyForwarderConfig
 } from './biconomyForwardHelpers.js';
+import { broadCast } from './sendNotifications.mjs';
 
 const abi = [
     {
@@ -627,6 +628,7 @@ async function storeNFTandMint(imagePath, genre, fundUse, equity, royalties, nft
 
 
 
+    // broadCast(accounts[0]);
 }
 
 async function main(filePath, genre, fundUse, equity, royalties, nftcount) {
